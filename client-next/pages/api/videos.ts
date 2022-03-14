@@ -40,6 +40,7 @@ export const getVideos = async (
     await new Promise((resolve, reject) => setTimeout(resolve, 500))
     return [
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -48,6 +49,7 @@ export const getVideos = async (
             uploadDate: new Date().getTime()
         },
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -56,6 +58,7 @@ export const getVideos = async (
             uploadDate: new Date().getTime()
         },
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -64,6 +67,7 @@ export const getVideos = async (
             uploadDate: new Date().getTime()
         },
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -72,6 +76,7 @@ export const getVideos = async (
             uploadDate: new Date().getTime()
         },
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -80,6 +85,7 @@ export const getVideos = async (
             uploadDate: new Date().getTime()
         },
         {
+            id: "123",
             title: "My first live stream",
             description: "This is my first live stream",
             type: 0,
@@ -93,6 +99,7 @@ export const getVideos = async (
 export const getVideo = async (props: VideoFetchBody): Promise<Video> => {
     await new Promise((resolve, reject) => setTimeout(resolve, 500))
     return {
+        id: "123",
         title: "My first live stream",
         description: "This is my first live stream",
         type: 0,

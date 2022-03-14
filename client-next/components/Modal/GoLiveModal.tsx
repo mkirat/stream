@@ -67,7 +67,7 @@ export const GoLiveModal = ({open, onClose}: Props) => {
         </Box>
             <Button variant={"outlined"} onClick={async () => {
                 const videoContractId = await createStreamOnChain();
-
+                // @ts-ignore
                 const response = await sendAuthenticated({fn: createStream, signMessage, publicKey},{
                     title,
                     description ,
