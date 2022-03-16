@@ -14,12 +14,12 @@ pub mod video {
     }
     pub fn update(ctx: Context<Update>, price: u64, message: Message) -> ProgramResult {
         let video_account = &mut ctx.accounts.video_account;
-        // if video_account.authority.to_string().as_str() == ctx.accounts.authority.key().to_string().as_str() {
+        if video_account.authority.to_string().as_str() == ctx.accounts.authority.key().to_string().as_str() {
             video_account.price = price;
             video_account.message = message;
-        // } else {
-            // return Err(ErrorCode::OwnerDidntMatchError.into());
-        // }
+        } else {
+            return Err(ErrorCode::OwnerDidntMatchError.into());
+        }
         Ok(())
     }
     pub fn buy(ctx: Context<Buy>, price: u64, message: Message) -> ProgramResult {
@@ -57,7 +57,7 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct Update<'info> {
-    // #[account(mut, has_one = authority)]
+    #[account(mut, has_one = authority)]
     #[account(mut)]
     pub video_account: Account<'info, Video>,
     #[account(signer)]
@@ -89,10 +89,3 @@ pub struct Message {
     pub text: String,
     pub layout: u8,
 }
-
-//
-// #[error_code]
-// pub enum ErrorCode {
-//     #[msg("User must own the Video to update it")]
-//     OwnerDidntMatchError,
-// }

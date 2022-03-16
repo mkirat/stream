@@ -8,28 +8,20 @@ import Router from "next/router";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {getVideos, Video} from "./api/videos";
 import {VideoGrid} from "../components/Landing/VideoGrid";
+import {VideoCard} from "../components/VideoCard";
+import {VideoTopper} from "../components/VideoTopper";
 
 interface Props {
     videos: Video[];
+    spotlight?: Video;
 }
 
-const Home: NextPage<Props> = ({ videos }: Props) => {
-    const wallet = useWallet();
-    console.error(wallet);
-    if (wallet.publicKey) {
-        // console.error("inside1");
-        // Router.push('/follow')
-    }
-  return (
+const Home: NextPage<Props> = ({ videos, spotlight }: Props) => {
+    return (
     <div className={styles.container}>
-      <Head>
-        <title>Stream it</title>
-        <meta name="description" content="Stream it" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main className={styles.main}>
-          StreamIt!
+          {spotlight && <VideoTopper thumbnail={spotlight.thumbnail} title={spotlight.title} description={spotlight.description} userId={spotlight.userId} date={spotlight.createdAt} id={spotlight.id} />}
+          <br/>
           <Container maxWidth="xl">
               <VideoGrid videos={videos} />
            </Container>
@@ -48,7 +40,8 @@ export const getServerSideProps = async() => {
     const videos = await getVideos();
     return {
         props: {
-            videos
+            videos,
+            spotlight: videos[0] || {}
         }
     }
 }

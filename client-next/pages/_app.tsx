@@ -13,6 +13,27 @@ import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import '../public/nprogress.css'
 import {Appbar} from "../components/Appbar";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import {Container} from "@mui/material";
+import { alpha, styled } from '@mui/material/styles';
+import {color} from "@mui/system";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#000000",
+    },
+    secondary: {
+      main: "#e42776",
+    },
+  },
+});
+
+const BackgroundContainer = styled(Container)(({ theme }) => ({
+  color: "white",
+  background: theme.palette.primary.main,
+}));
+
 
 function MyApp({ Component, pageProps }: AppProps) {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
@@ -40,8 +61,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   return <ConnectionProvider endpoint={endpoint}>
     <WalletProvider>
       <WalletModalProvider>
-        <Appbar />
-        <Component {...pageProps} />
+        <ThemeProvider theme={theme}>
+          <div>{router.pathname.includes("/advertisment") ? <Component {...pageProps} />:<> <Appbar />
+            <BackgroundContainer maxWidth={"100vw"}>
+            <Component {...pageProps} />
+            </BackgroundContainer></>}</div>
+        </ThemeProvider>
       </WalletModalProvider>
     </WalletProvider>
   </ConnectionProvider>

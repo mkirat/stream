@@ -5,9 +5,10 @@ export default function({url}: {url: string}) {
     return (
         <>
             <HlsPlayer
-                playerRef={playerRef}
-                src="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-                autoPlay={false}
+                playerRef={playerRef || null}
+                src={url}
+                autoPlay={true}
+                muted={true}
                 controls={true}
                 width="100%"
                 height="auto"

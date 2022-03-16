@@ -43,24 +43,19 @@ export const Appbar = () => {
                     color="inherit"
                     aria-label="menu"
                     sx={{ mr: 2 }}
+                    onClick={() => router.push("/")}
                 >
-                    <MenuIcon />
+                    <img style={{width: 50}} src={"/icon.png"} />
                 </IconButton>
                 <div style={{flexGrow: 1 }}>
                 </div>
                 {publicKey && <Box sx={{ flexGrow: 0 }}>
-                    <Box onClick={() => router.push(`/streams/${publicKey}`)}>
-                        My streams
-                    </Box>
-                    <IconButton onClick={() => {setGoLiveModal(true)}}>
-                        <LiveTvIcon />
-                    </IconButton>
-                    <IconButton aria-label="delete">
-                        <CloudUploadIcon />
+                    <IconButton size={"large"} color={"secondary"} onClick={() => {setGoLiveModal(true)}}>
+                        <LiveTvIcon style={{fontSize: 35, marginRight: 10}} />
                     </IconButton>
                     <Tooltip title="Open settings">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                            <Avatar color={"secondary"}  > {(publicKey?.toBase58() || "").substr(0, 1)}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu
@@ -79,8 +74,11 @@ export const Appbar = () => {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                     >
-                        <MenuItem onClick={handleCloseUserMenu}>
-                            <Typography textAlign="center">Dashboard</Typography>
+                        <MenuItem onClick={() => {
+                            router.push(`/streams/${publicKey}`)
+                            handleCloseUserMenu()
+                        }}>
+                            <Typography textAlign="center">My Videos</Typography>
                         </MenuItem>
                         <div style={{maxWidth: 200, padding: 10}} onClick={handleCloseUserMenu}>
                             <Wallet />

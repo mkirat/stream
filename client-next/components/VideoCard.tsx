@@ -21,6 +21,7 @@ interface VideoCardProps {
     thumbnail: string;
     title: string;
     description: string;
+    userId: string;
     date: number;
     id: string;
 }
@@ -41,40 +42,27 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 
-export const VideoCard = ({title, description, thumbnail, date, id}: VideoCardProps) => {
+export const VideoCard = ({title, description, thumbnail, date, id, userId}: VideoCardProps) => {
     const router = useRouter()
     return (
-        <Card>
-            <CardHeader
-                avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        R
-                    </Avatar>
-                }
-                action={
-                    <Button onClick={() => router.push(`/stream/${id}`)}>Join</Button>
-                }
-                title={title}
-                subheader={new Date(date).toDateString()}
-            />
+        <Card onClick={() => router.push(`/stream/${id}`)}>
             <CardMedia
+                style={{cursor: "pointer"}}
                 component="img"
                 height="194"
                 image={thumbnail}
                 alt="Paella dish"
             />
-            <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                    {description}
-                </Typography>
-            </CardContent>
+            <CardHeader
+                avatar={
+                    <Avatar onClick={() => router.push(`/streams/${userId}`)} sx={{ bgcolor: red[500] }} aria-label="recipe">
+                        {(userId || "").substr(0, 1)}
+                    </Avatar>
+                }
+                title={title}
+                subheader={new Date(date).toDateString()}
+            />
             <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
-                </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon />
-                </IconButton>
             </CardActions>
         </Card>
     );

@@ -11,6 +11,7 @@ import {useState} from "react";
 import {TextField} from "@mui/material";
 import {createStreamOnChain} from "../../pages/api/contract";
 import {useRouter} from "next/router";
+import {CssTextField} from "./BuyNftModal";
 
 const style = {
     position: 'absolute',
@@ -29,44 +30,53 @@ interface Props {
     onClose: () => void;
 }
 
+//TODO: Fix thumbnail generation logic
 export const GoLiveModal = ({open, onClose}: Props) => {
     const { publicKey, signMessage } = useWallet();
     const [title, setTitle] = useState("")
+    const [price, setPrice] = useState(1);
     const [description, setDescription] = useState("")
-    const [thumbnail, setThumbnail] = useState("https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg")
+    const [thumbnail, setThumbnail] = useState(`/thumb-${Math.floor(Math.random() * 7) + 1}.jpeg`)
     const router = useRouter();
     return <Modal
         onClose={onClose}
         open={open}
     >
-        <Box sx={style}>
+        <Box style={{background: `linear-gradient(to right, #0f2027, #130f40)`, color: "#dff9fb"}} sx={style}>
             <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
                 Go live
             </Typography>
-
             <Box>
-            <TextField
+            <CssTextField
+                sx={{input: {color: "white"}}}
+                style={{margin: 3}}
+                fullWidth
                 label="Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
 
-            <TextField
-                label="Description"
-                multiline
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-            />
-
-            <TextField
-                label="Thumbnail"
-                value={thumbnail}
-                onChange={(e) => setThumbnail(e.target.value)}
+                <CssTextField
+                    sx={{input: {color: "white"}}}
+                    style={{margin: 3}}
+                    fullWidth
+                    label="Description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+            <CssTextField
+                sx={{input: {color: "white"}}}
+                style={{margin: 3}}
+                fullWidth
+                label="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
             />
         </Box>
-            <Button variant={"outlined"} onClick={async () => {
-                const videoContractId = await createStreamOnChain();
+            <br/>
+            <div style={{display: "flex",  justifyContent: "center"}}>
+            <Button variant={"contained"} color={"secondary"} onClick={async () => {
+                const videoContractId = await createStreamOnChain(price);
                 // @ts-ignore
                 const response = await sendAuthenticated({fn: createStream, signMessage, publicKey},{
                     title,
@@ -74,8 +84,10 @@ export const GoLiveModal = ({open, onClose}: Props) => {
                     thumbnail,
                     videoContractId,
                 })
+                onClose();
                 router.push(`/stream/${videoContractId}`)
             }}>Go Live</Button>
+            </div>
         </Box>
     </Modal>
 }

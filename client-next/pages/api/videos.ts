@@ -19,11 +19,11 @@ export interface VideoCreateProps {
 export interface Video {
     title: string;
     description: string;
-    link: string;
     type: VideoType;
     thumbnail: string;
-    uploadDate: number;
+    createdAt: number;
     id: string;
+    userId: string;
 }
 
 interface VideoFetchBody {
@@ -37,76 +37,8 @@ type Data = {
 
 export const getVideos = async (
 ): Promise<Video[]> => {
-    await new Promise((resolve, reject) => setTimeout(resolve, 500))
-    return [
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-        {
-            id: "123",
-            title: "My first live stream",
-            description: "This is my first live stream",
-            type: 0,
-            link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-            uploadDate: new Date().getTime()
-        },
-    ]
-}
-
-export const getVideo = async (props: VideoFetchBody): Promise<Video> => {
-    await new Promise((resolve, reject) => setTimeout(resolve, 500))
-    return {
-        id: "123",
-        title: "My first live stream",
-        description: "This is my first live stream",
-        type: 0,
-        link: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-        thumbnail: "https://i.ytimg.com/vi/cEmlaDsK7GQ/maxresdefault.jpg",
-        uploadDate: new Date().getTime()
-    };
+    const response = await axios.get(`${apiUrl}/video/spotlight`);
+    return response.data.streams
 }
 
 export const getStreams = async ({ publicKey }: {publicKey: string}) => {
@@ -138,10 +70,17 @@ export const createStream = async ({title, description, thumbnail, videoContract
 }
 
 export const getStream = async({videoContractId}: {videoContractId: string}) => {
-    const response = await axios.get(`${apiUrl}/video?id=${videoContractId}`);
+    const response = await axios.get(`${apiUrl}/video?id=${videoContractId}`, {
+        headers: {
+            "Authorization": `Bearer: ${getToken()}`
+        }
+    });
     return {
         hlsUrl: response.data.hlsUrl,
         title: response.data.title,
         description: response.data.description,
+        rtmpUrl: response.data.rtmpUrl,
+        streamKey: response.data.streamKey,
+        userId: response.data.userId
     };
 }

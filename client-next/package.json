@@ -11,6 +11,7 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.3.1",
+    "@mui/lab": "^5.0.0-alpha.73",
     "@mui/material": "^5.4.0",
     "@next/bundle-analyzer": "^12.0.10",
     "@project-serum/anchor": "^0.20.1",
@@ -28,7 +29,8 @@
     "nprogress": "^0.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-hls-player": "^3.0.7"
+    "react-hls-player": "^3.0.7",
+    "sweetalert2": "^11.4.4"
   },
   "devDependencies": {
     "@types/node": "17.0.15",

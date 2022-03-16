@@ -39,9 +39,22 @@ router.get('/bulk', extractUserIfThere, async (req, res) => {
   });
 });
 
-router.get('/', async (req, res) => {
+router.get('/spotlight', async (req, res) => {
+  // @ts-ignore
+  const streams = await Streams.findAll({
+    limit: 10,
+    raw: true,
+  });
+  return res.json({
+    streams: cleanStreamProps(streams, false),
+  });
+});
+
+router.get('/', extractUserIfThere, async (req, res) => {
   const { id } = (req.query || {});
-  console.log(id);
+  // @ts-ignore
+  const { publicKey: requesterPublicKey } = (req.user || {});
+
   const stream = await Streams.findOne({
     where: {
       id,
@@ -52,15 +65,10 @@ router.get('/', async (req, res) => {
     hlsUrl: stream.hlsUrl,
     title: stream.title,
     description: stream.description,
+    rtmpUrl: stream.rtmpUrl, // TODO: This is insecure
+    streamKey: stream.streamKey,
+    userId: stream.userId,
   });
 });
-let count = 6;
-router.post('/subspace', (req, res) => {
-  count -= 1;
-  console.log(count);
-  if (count <= 0) {
-    return res.json({});
-  }
-  return res.status(401).json({});
-});
+
 export default router;

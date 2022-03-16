@@ -81,6 +81,9 @@ const cleanStreamProps = (streams, isOwner) => {
         description: stream.description,
         thumbnail: stream.thumbnail,
         id: stream.id,
+        createdAt: stream.createdAt,
+        type: 0,
+        userId: stream.userId,
     }));
 };
 exports.cleanStreamProps = cleanStreamProps;

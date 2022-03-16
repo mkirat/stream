@@ -5,12 +5,14 @@ import {Container, Box} from "@mui/material";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {getStreams, Video} from "../api/videos";
 import {VideoGrid} from "../../components/Landing/VideoGrid";
+import Typography from "@mui/material/Typography";
 
 interface Props {
     videos: Video[];
+    id: string;
 }
 
-const Streams: NextPage<Props> = ({ videos }: Props) => {
+const Streams: NextPage<Props> = ({ videos, id }: Props) => {
     const wallet = useWallet();
     console.error(wallet);
     if (wallet.publicKey) {
@@ -19,14 +21,11 @@ const Streams: NextPage<Props> = ({ videos }: Props) => {
     }
     return (
         <div className={styles.container}>
-            <Head>
-                <title>Stream it</title>
-                <meta name="description" content="Stream it" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
             <main className={styles.main}>
-                Videos
+                <Typography variant={"h6"}>
+                    {id} owns {videos.length} videos
+                </Typography>
+                <br/>
                 <Container maxWidth="xl">
                     <VideoGrid videos={videos} />
                 </Container>
@@ -54,8 +53,10 @@ export const getServerSideProps = async(ctx: any) => {
                 description: stream.description,
                 link: `/stream/${stream.id}`,
                 thumbnail: stream.thumbnail,
-                id: stream.id
-            }))
+                id: stream.id,
+                userId: stream.userId
+            })),
+            id: query.id
         }
     }
 }

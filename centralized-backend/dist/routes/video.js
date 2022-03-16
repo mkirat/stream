@@ -47,9 +47,20 @@ router.get('/bulk', middlewares_1.extractUserIfThere, (req, res) => __awaiter(vo
         streams: (0, stream_1.cleanStreamProps)(streams, requesterPublicKey === publicKey),
     });
 }));
-router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/spotlight', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // @ts-ignore
+    const streams = yield Stream_1.Streams.findAll({
+        limit: 10,
+        raw: true,
+    });
+    return res.json({
+        streams: (0, stream_1.cleanStreamProps)(streams, false),
+    });
+}));
+router.get('/', middlewares_1.extractUserIfThere, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = (req.query || {});
-    console.log(id);
+    // @ts-ignore
+    const { publicKey: requesterPublicKey } = (req.user || {});
     const stream = yield Stream_1.Streams.findOne({
         where: {
             id,
@@ -60,16 +71,10 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         hlsUrl: stream.hlsUrl,
         title: stream.title,
         description: stream.description,
+        rtmpUrl: stream.rtmpUrl,
+        streamKey: stream.streamKey,
+        userId: stream.userId,
     });
 }));
-let count = 6;
-router.post('/subspace', (req, res) => {
-    count -= 1;
-    console.log(count);
-    if (count <= 0) {
-        return res.json({});
-    }
-    return res.status(401).json({});
-});
 exports.default = router;
 //# sourceMappingURL=video.js.map
