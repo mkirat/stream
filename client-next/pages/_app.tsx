@@ -63,6 +63,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WalletModalProvider>
         <ThemeProvider theme={theme}>
           <div>{router.pathname.includes("/advertisment") ? <Component {...pageProps} />:<> <Appbar />
+            {/*
+                // @ts-ignore */}
             <BackgroundContainer maxWidth={"100vw"}>
             <Component {...pageProps} />
             </BackgroundContainer></>}</div>

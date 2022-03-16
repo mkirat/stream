@@ -66,12 +66,16 @@ const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpU
                                 Stream Credentials
                             </Typography>
                             <CardMedia>
-                                {userId === publicKey?.toBase58() && <TextField InputProps={{
-                                    endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
+
+                                {/*
+                // @ts-ignore */}
+                                {userId === publicKey?.toBase58() && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
                                 }} style={{padding: 10}} fullWidth label={"RTMP URL"} value={rtmpUrl} />}
                                 <br/>
-                                {userId === publicKey?.toBase58() && <TextField InputProps={{
-                                    endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
+
+                                {/*
+                                // @ts-ignore */}
+                                {userId === publicKey?.toBase58() && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
                                 }} style={{padding: 10}} fullWidth label={"Stream Key"} value={streamKey} />}
                             </CardMedia>
                         </Card>}

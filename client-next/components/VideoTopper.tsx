@@ -14,17 +14,19 @@ interface Props {
     id: string;
     title: string;
     description: string;
+    userId: string;
+    date: number;
 }
 
 export const VideoTopper = ({title, description, id}:  Props) => {
     const router = useRouter();
     return (
         <Container style={{border: "1px solid gray", borderRadius: 10, margin: 20, padding: 30}}>
-            <center>
+            <div style={{display: "flex", justifyContent: "center"}}>
                 <Typography variant={"h4"} style={{margin: 30}}>
                     Spotlight
                 </Typography>
-            </center>
+            </div>
             <ReactHlsPlayer
                 url="https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
             />

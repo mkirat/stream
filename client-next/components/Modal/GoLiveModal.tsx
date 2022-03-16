@@ -70,7 +70,7 @@ export const GoLiveModal = ({open, onClose}: Props) => {
                 fullWidth
                 label="Price"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(parseFloat(e.target.value))}
             />
         </Box>
             <br/>

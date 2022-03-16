@@ -4,8 +4,9 @@ export default function({url}: {url: string}) {
     const playerRef = useRef<HTMLVideoElement>();
     return (
         <>
-            <HlsPlayer
-                playerRef={playerRef || null}
+            {/*
+                // @ts-ignore */}
+            <HlsPlayer playerRef={playerRef || null}
                 src={url}
                 autoPlay={true}
                 muted={true}
