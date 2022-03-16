@@ -1,6 +1,7 @@
 import React, {useRef} from "react";
 import HlsPlayer from 'react-hls-player';
-export default function({url}: {url: string}) {
+
+const ReactHlsPlayer = ({url}: {url: string}) => {
     const playerRef = useRef<HTMLVideoElement>();
     return (
         <>
@@ -17,3 +18,5 @@ export default function({url}: {url: string}) {
         </>
     );
 };
+
+export default ReactHlsPlayer;

@@ -79,7 +79,7 @@ const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpU
                                 }} style={{padding: 10}} fullWidth label={"Stream Key"} value={streamKey} />}
                             </CardMedia>
                         </Card>}
-                        {videos.map((video) => <div style={{margin: 30}}> <VideoCard key={video.id} thumbnail={video.thumbnail} title={video.title} description={video.description} userId={video.userId} date={video.createdAt} id={video.id}/> </div>)}
+                        {videos.map((video, index) => <div key={index} style={{margin: 30}}> <VideoCard key={video.id} thumbnail={video.thumbnail} title={video.title} description={video.description} userId={video.userId} date={video.createdAt} id={video.id}/> </div>)}
                     </Grid>
                 </Grid>
             </main>
