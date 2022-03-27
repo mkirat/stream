@@ -8,7 +8,7 @@ import {useWallet} from "@solana/wallet-adapter-react";
 import {createStream} from "../../pages/api/videos";
 import {PublicKey} from "@solana/web3.js";
 import {useState} from "react";
-import {TextField} from "@mui/material";
+import {Chip, List, ListItem, TextField} from "@mui/material";
 import {createStreamOnChain} from "../../pages/api/eth/contract";
 import {useRouter} from "next/router";
 import {CssTextField} from "./BuyNftModal";
@@ -38,6 +38,9 @@ export const GoLiveModal = ({open, onClose, account}: Props) => {
     const { publicKey, signMessage } = useWallet();
     const [title, setTitle] = useState("")
     const [price, setPrice] = useState(1);
+    const [tags, setTags] = useState<string[]>([]);
+    const [currentTag, setCurrentTag] = useState("");
+
     const { connector} = useWeb3React()
     const [description, setDescription] = useState("")
     const [thumbnail, setThumbnail] = useState(`/thumb-${Math.floor(Math.random() * 7) + 1}.jpeg`)
@@ -60,14 +63,44 @@ export const GoLiveModal = ({open, onClose, account}: Props) => {
                 onChange={(e) => setTitle(e.target.value)}
             />
 
-                <CssTextField
-                    sx={{input: {color: "white"}}}
-                    style={{margin: 3}}
-                    fullWidth
-                    label="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
+            <CssTextField
+                sx={{input: {color: "white"}}}
+                style={{margin: 3}}
+                fullWidth
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+            />
+            <CssTextField
+                sx={{input: {color: "white"}}}
+                style={{margin: 3}}
+                fullWidth
+                label="Tags"
+                value={currentTag}
+                onChange={(e) => setCurrentTag(e.target.value)}
+                onKeyDown={e => {
+                    if (e.keyCode === 13) {
+                        if (!currentTag || tags.includes(currentTag)) {
+                            return;
+                        }
+                        setTags((tags) => [...tags, currentTag])
+                        setCurrentTag("");
+                    }
+                }}
+            />
+                <List>
+                {tags.map((tag, index) => <Chip
+                        color={"primary"}
+                        key={index}
+                        label={tag}
+                        onDelete={() => {
+                            setTags((tags) => {
+                                return tags.filter((tag , index2) => index !== index2)
+                            })
+                        }}
+                    />
+                )}
+                </List>
             {/*<CssTextField*/}
             {/*    sx={{input: {color: "white"}}}*/}
             {/*    style={{margin: 3}}*/}

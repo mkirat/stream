@@ -14,7 +14,8 @@ interface Props {
 
 const Stream: NextPage<Props> = ({ id }: Props) => {
     const { publicKey } = useWallet()
-    const [text, setText] = useState("")
+    const [waveText, setWaveText] = useState("")
+    const [topRightText, setTopRightText] = useState("")
 
     const init = async() => {
         const web3Eth = new Web3();
@@ -28,10 +29,19 @@ const Stream: NextPage<Props> = ({ id }: Props) => {
             .on('data', function(event){
                 console.log(event); // same results as the optional callback above
                 if (event.returnValues["_streamId"] == id) {
-                    setText(event.returnValues["_message"])
-                    setTimeout(() => {
-                        setText("");
-                    }, 7000)
+                    if (event.returnValues["_amount"] / 1000000000 < 1) {
+                        // Less than 1 MATIC
+                        setTopRightText(event.returnValues["_message"]);
+                        setTimeout(() => {
+                            setTopRightText("");
+                        }, 7000);
+                    } else {
+                        // more than 1 MATIC
+                        setWaveText(event.returnValues["_message"])
+                        setTimeout(() => {
+                            setWaveText("");
+                        }, 15000);
+                    }
                 }
             })
     }
@@ -41,23 +51,40 @@ const Stream: NextPage<Props> = ({ id }: Props) => {
 
     return (
         <div style={{height: "100vh", width: "100vw", background: "transparent"}}>
-            {text && <>
+            {waveText && <>
                 <div style={{
-                "position": "fixed",
-                bottom:"0%",
-                left:  "0%",
-                width:"100%",
-            }}>
-                <img src={"/wave.png"} style={{width: 800}} />
-            </div>
-            <div style={{
-                "position": "fixed",
-                bottom:"0%",
-                width:"100%",}}>
-                <div style={{marginLeft: 10, fontSize: 40, marginBottom: 25}}>
-                    {text}
+                    "position": "fixed",
+                    bottom:"0%",
+                    left:  "0%",
+                    width:"100%",
+                }}>
+                    <img src={"/wave.png"} style={{width: 800}} />
                 </div>
-            </div>
+                <div style={{
+                    "position": "fixed",
+                    bottom:"0%",
+                    width:"100%",}}>
+                    <div style={{marginLeft: 10, fontSize: 40, marginBottom: 25}}>
+                        {waveText}
+                    </div>
+                </div>
+            </>
+            }
+            {topRightText && <>
+                <div style={{
+                    "position": "fixed",
+                    bottom:"0%",
+                    right: "0%",
+                    maxWidth:"350px",
+                    background: "#2c3e50",
+                    color: "white",
+                    fontSize: 20,
+                    margin: 10,
+                    borderRadius: 10,
+                    padding: 10
+                }}>
+                    {topRightText}
+                </div>
             </>
             }
         </div>

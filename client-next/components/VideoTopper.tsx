@@ -40,7 +40,7 @@ export const VideoTopper = ({title, description, id}:  Props) => {
                 </Typography>
                 </div>
                 <div style={{marginTop: 4}}>
-                <Button variant={"contained"} size={"large"} color={"secondary"} onClick={() => router.push(`/stream/${id}`)}>Buy</Button>
+                <Button variant={"contained"} size={"large"} color={"secondary"} onClick={() => router.push(`/stream/${id}`)}>Go</Button>
                 </div>
             </div>
         </Container>

@@ -3,7 +3,7 @@ import {Modal} from "./index";
 import Web3 from "web3"
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Alert, TextField} from "@mui/material";
+import {Alert, Chip, TextField} from "@mui/material";
 import { styled } from '@mui/material/styles';
 import Button from "@mui/material/Button";
 import {createStreamOnChain} from "../../pages/api/contract";
@@ -109,6 +109,21 @@ export const BuyNftModal = ({videoContractId, open, onClose, account }: {account
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
             />
+            <br/><br/>
+            <div style={{marginLeft: 5, marginBottom: 3, display: "flex", justifyContent: "center"}}>
+                <Chip label={"1 MATIC"} color={"primary"} onClick={() => setUpdatedPrice("1")}>
+            </Chip>
+
+            <Chip color={"primary"} label={"3 MATIC"} onClick={() => setUpdatedPrice("3")}>
+                5 MATIC
+            </Chip>
+
+            <Chip color={"primary"} label={"10 MATIC"} onClick={() => setUpdatedPrice("10")}>
+                10 MATIC
+            </Chip>
+            </div>
+
+
             <CssTextField
                 sx={{input: {color: "white"}}}
                 style={{margin: 10}}
