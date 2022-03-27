@@ -9,9 +9,11 @@ import {createStream} from "../../pages/api/videos";
 import {PublicKey} from "@solana/web3.js";
 import {useState} from "react";
 import {TextField} from "@mui/material";
-import {createStreamOnChain} from "../../pages/api/contract";
+import {createStreamOnChain} from "../../pages/api/eth/contract";
 import {useRouter} from "next/router";
 import {CssTextField} from "./BuyNftModal";
+import useMetaMask from "../eth/useMetamask";
+import {useWeb3React} from "@web3-react/core";
 
 const style = {
     position: 'absolute',
@@ -27,14 +29,16 @@ const style = {
 
 interface Props {
     open: boolean;
+    account: string;
     onClose: () => void;
 }
 
 //TODO: Fix thumbnail generation logic
-export const GoLiveModal = ({open, onClose}: Props) => {
+export const GoLiveModal = ({open, onClose, account}: Props) => {
     const { publicKey, signMessage } = useWallet();
     const [title, setTitle] = useState("")
     const [price, setPrice] = useState(1);
+    const { connector} = useWeb3React()
     const [description, setDescription] = useState("")
     const [thumbnail, setThumbnail] = useState(`/thumb-${Math.floor(Math.random() * 7) + 1}.jpeg`)
     const router = useRouter();
@@ -64,25 +68,26 @@ export const GoLiveModal = ({open, onClose}: Props) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
-            <CssTextField
-                sx={{input: {color: "white"}}}
-                style={{margin: 3}}
-                fullWidth
-                label="Price"
-                value={price}
-                onChange={(e) => setPrice(parseFloat(e.target.value))}
-            />
+            {/*<CssTextField*/}
+            {/*    sx={{input: {color: "white"}}}*/}
+            {/*    style={{margin: 3}}*/}
+            {/*    fullWidth*/}
+            {/*    label="Price"*/}
+            {/*    value={price}*/}
+            {/*    onChange={(e) => setPrice(parseFloat(e.target.value))}*/}
+            {/*/>*/}
         </Box>
             <br/>
             <div style={{display: "flex",  justifyContent: "center"}}>
             <Button variant={"contained"} color={"secondary"} onClick={async () => {
-                const videoContractId = await createStreamOnChain(price);
+                const videoContractId = await createStreamOnChain(account, await connector?.getProvider());
                 // @ts-ignore
-                const response = await sendAuthenticated({fn: createStream, signMessage, publicKey},{
+                const response = await createStream({
+                    account,
                     title,
                     description ,
                     thumbnail,
-                    videoContractId,
+                    videoContractId: videoContractId as string,
                 })
                 onClose();
                 router.push(`/stream/${videoContractId}`)

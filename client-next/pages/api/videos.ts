@@ -14,6 +14,7 @@ export interface VideoCreateProps {
     description: string;
     thumbnail: string;
     videoContractId: string;
+    account: string;
 }
 
 export interface Video {
@@ -54,7 +55,7 @@ export const getStreams = async ({ publicKey }: {publicKey: string}) => {
     }
 }
 
-export const createStream = async ({title, description, thumbnail, videoContractId}: VideoCreateProps): Promise<{ id: string }> => {
+export const createStream = async ({title, description, thumbnail, account, videoContractId}: VideoCreateProps): Promise<{ id: string }> => {
     const response = await axios.post(`${apiUrl}/video`, {
         type: VideoType.Live,
         title,
@@ -63,7 +64,7 @@ export const createStream = async ({title, description, thumbnail, videoContract
         videoContractId
     }, {
         headers: {
-            "Authorization": `Bearer: ${getToken()}`
+            "Authorization": `Bearer: ${account}`
         }
     });
     return {id: response.data?.id || ""};

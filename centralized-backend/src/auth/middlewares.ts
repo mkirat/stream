@@ -6,30 +6,24 @@ interface VerifyTokenProps {
 export const extractUserIfThere = (req, res, next) => {
   const bearerHeader = req.headers.authorization || '';
   const bearer = bearerHeader.split(' ');
-  const token = bearer[1];
+  const account = bearer[1];
 
-  try {
-    const { publicKey } = verifyToken({ token });
-    req.user = {
-      publicKey,
-    };
-  } catch (e) {
-  }
+  req.user = {
+    publicKey: account,
+  };
   next();
 };
 export const tokenMiddleware = (req, res, next) => {
   const bearerHeader = req.headers.authorization || '';
   const bearer = bearerHeader.split(' ');
-  const token = bearer[1];
+  const account = bearer[1];
 
-  try {
-    const { publicKey } = verifyToken({ token });
+  if (account) {
     req.user = {
-      publicKey,
+      publicKey: account,
     };
     next();
-  } catch (e) {
-    console.log('catch');
+  } else {
     res.status(403).json({ msg: "You're unauthenticated" });
   }
 };

@@ -17,11 +17,15 @@ import {GoLiveModal} from "../Modal/GoLiveModal";
 import Link from 'next/link'
 import Button from "@mui/material/Button";
 import {useRouter} from "next/router";
+import EthWallet from "../eth/Wallet"
+import useMetaMask from "../eth/useMetamask";
 
 export const Appbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [goLiveModal, setGoLiveModal] = React.useState(false);
+    const { isActive, account } = useMetaMask()
+
     const handleOpenNavMenu = (event: any) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -32,7 +36,6 @@ export const Appbar = () => {
         setAnchorElUser(null);
     };
     const router = useRouter()
-    const { publicKey } = useWallet();
 
     return <>
         <AppBar position="static">
@@ -49,13 +52,13 @@ export const Appbar = () => {
                 </IconButton>
                 <div style={{flexGrow: 1 }}>
                 </div>
-                {publicKey && <Box sx={{ flexGrow: 0 }}>
+                {isActive && <Box sx={{ flexGrow: 0 }}>
                     <IconButton size={"large"} color={"secondary"} onClick={() => {setGoLiveModal(true)}}>
                         <LiveTvIcon style={{fontSize: 35, marginRight: 10}} />
                     </IconButton>
                     <Tooltip title="Open settings">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <Avatar color={"secondary"}  > {(publicKey?.toBase58() || "").substr(0, 1)}</Avatar>
+                            <Avatar color={"secondary"}  > {(account?.toString() || "").substr(0, 1)}</Avatar>
                         </IconButton>
                     </Tooltip>
                     <Menu
@@ -81,16 +84,16 @@ export const Appbar = () => {
                             <Typography textAlign="center">My Videos</Typography>
                         </MenuItem>
                         <div style={{maxWidth: 200, padding: 10}} onClick={handleCloseUserMenu}>
-                            <Wallet />
+                            <EthWallet />
                         </div>
                     </Menu>
                 </Box>
                 }
-                {!publicKey && <div style={{maxWidth: 200}}>
-                    <Wallet />
+                {!isActive && <div style={{maxWidth: 200}}>
+                    <EthWallet />
                 </div>}
             </Toolbar>
         </AppBar>
-        <GoLiveModal open={goLiveModal} onClose={() => {setGoLiveModal(false)}}/>
+        <GoLiveModal account={account} open={goLiveModal} onClose={() => {setGoLiveModal(false)}}/>
     </>
 }

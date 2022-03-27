@@ -42,6 +42,7 @@ const PROFILES = [
     },
 ];
 const createStream = ({ publicKey, streamId, title, description, thumbnail, }) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`Bearer ${config_1.LIVEPEER_KEY}`);
     const response = yield axios_1.default.post(`${config_1.LIVEPEER_API_URL}/api/stream`, {
         name: streamId,
         profiles: PROFILES,

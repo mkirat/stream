@@ -18,6 +18,11 @@ import {Container} from "@mui/material";
 import { alpha, styled } from '@mui/material/styles';
 import {color} from "@mui/system";
 
+import Web3 from 'web3'
+import { Web3ReactProvider } from '@web3-react/core'
+import { MetaMaskProvider } from '../components/eth/useMetamask'
+
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -34,6 +39,10 @@ const BackgroundContainer = styled(Container)(({ theme }) => ({
   background: theme.palette.primary.main,
 }));
 
+
+function getLibrary(provider, connector) {
+  return new Web3(provider)
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
@@ -57,18 +66,23 @@ function MyApp({ Component, pageProps }: AppProps) {
       router.events.off('routeChangeComplete', handleStop)
       router.events.off('routeChangeError', handleStop)
     }
-  }, [router])
+  }, [router]);
+
   return <ConnectionProvider endpoint={endpoint}>
     <WalletProvider>
       <WalletModalProvider>
-        <ThemeProvider theme={theme}>
-          <div>{router.pathname.includes("/advertisment") ? <Component {...pageProps} />:<> <Appbar />
-            {/*
-                // @ts-ignore */}
-            <BackgroundContainer maxWidth={"100vw"}>
-            <Component {...pageProps} />
-            </BackgroundContainer></>}</div>
-        </ThemeProvider>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <MetaMaskProvider>
+            <ThemeProvider theme={theme}>
+              <div>{router.pathname.includes("/advertisment") ? <Component {...pageProps} />:<> <Appbar />
+                {/*
+                    // @ts-ignore */}
+                <BackgroundContainer maxWidth={"100vw"}>
+                <Component {...pageProps} />
+                </BackgroundContainer></>}</div>
+            </ThemeProvider>
+        </MetaMaskProvider>
+      </Web3ReactProvider>
       </WalletModalProvider>
     </WalletProvider>
   </ConnectionProvider>

@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {Modal} from "./index";
+import Web3 from "web3"
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {Alert, TextField} from "@mui/material";
@@ -10,11 +11,14 @@ import {sendAuthenticated} from "../../pages/api/auth";
 import {createStream} from "../../pages/api/videos";
 import * as React from "react";
 import * as anchor from "@project-serum/anchor";
-import {CONTRACT_ID, rpcUrl} from "../../config";
+import {CONTRACT_ID, ETH_CONTRACT_ID, rpcUrl} from "../../config";
 import idl from "../../types/video.json";
 import {PublicKey} from "@solana/web3.js";
 import {useWallet} from "@solana/wallet-adapter-react";
 import LoadingButton from '@mui/lab/LoadingButton';
+import abi from "../../types/abi";
+import useMetaMask from "../eth/useMetamask";
+import {useWeb3React} from "@web3-react/core";
 
 export const CssTextField = styled(TextField)({
     '& label.Mui-focused': {
@@ -52,41 +56,38 @@ const style = {
 };
 
 
-export const BuyNftModal = ({videoContractId, price, open, onClose, auth }: {auth: string; videoContractId: string; price: string;open: boolean; onClose:() => void; }) => {
+export const BuyNftModal = ({videoContractId, open, onClose, account }: {account: string; videoContractId: string; open: boolean; onClose:() => void; }) => {
     const [updatedPrice, setUpdatedPrice] = useState("");
     const [newMessage, setNewMessage] = useState("");
     const [error, setError] = useState(false);
     const [buyInProgress, setBuyInProgress] = useState(false);
     const [bought, setBought] = useState(false);
-    const { publicKey } = useWallet()
+    const { connector} = useWeb3React()
 
     const buy = async () => {
         setBuyInProgress(true)
         setError(false);
         setBought(false);
         try {
-            //@ts-ignore
-            const wallet = window.solana;
-            const connection = new anchor.web3.Connection(rpcUrl, 'confirmed');
-            anchor.setProvider(new anchor.Provider(connection, wallet, {commitment: "confirmed"}));
-            //@ts-ignore
-            const program = new anchor.Program(idl, CONTRACT_ID, anchor.getProvider());
-            const tx = await program.rpc.buy(new anchor.BN(parseInt(updatedPrice)), {text: newMessage, layout: 1}, {
-                accounts: {
-                    videoAccount: new PublicKey(videoContractId),
-                    authority: new PublicKey(auth),
-                    buyer: publicKey as PublicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
-                    tokenProgram: new PublicKey(
-                        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-                    )
-                }, signers: []
-            });
+            console.log(connector)
+            const web3Eth = new Web3(await connector?.getProvider());
+            const contract = new web3Eth.eth.Contract(abi, ETH_CONTRACT_ID);
+            const accounts = await web3Eth.eth.getAccounts();
+            const response = await new Promise((resolve, reject) => {
+                contract.methods.sendMessage(videoContractId, newMessage, updatedPrice * 1000000000).send({
+                    from: accounts[0], value: (updatedPrice * 1000000000000000000).toString()
+                })
+                .on('receipt', function(receipt) {
+                    resolve(receipt.events["MessageAdded"])
+                })
+            })
+            console.error(response.returnValues["_message"]);
             setBought(true);
             window.setTimeout(() => {
                 onClose();
             }, 2000)
         } catch(e) {
+            console.error(e)
             setError(true);
         }
         setBuyInProgress(false)
@@ -98,7 +99,7 @@ export const BuyNftModal = ({videoContractId, price, open, onClose, auth }: {aut
     >
         <Box style={{background: `linear-gradient(to right, #0f2027, #130f40)`, color: "#dff9fb"}} sx={style}>
             <Typography variant={"h5"} style={{margin: 5}}>
-                Buy
+                Send Superchat
             </Typography>
             <CssTextField
                 sx={{input: {color: "white"}}}
@@ -112,13 +113,13 @@ export const BuyNftModal = ({videoContractId, price, open, onClose, auth }: {aut
                 sx={{input: {color: "white"}}}
                 style={{margin: 10}}
                 fullWidth
-                label="Price for next buy"
+                label="Amount"
                 value={updatedPrice}
                 onChange={(e) => setUpdatedPrice(e.target.value)}
             />
             <br/><br/>
             <div style={{display: "flex", justifyContent : "center"}}>
-                <Button variant={"contained"} size={"large"} color={"secondary"} onClick={buy}>Buy for {price} SOL</Button>
+                <Button variant={"contained"} size={"large"} color={"secondary"} onClick={buy}>Send superchat</Button>
             </div>
             <br/>
             {bought && <Alert severity="success">Success! Your message should appear on the video soon.</Alert>}

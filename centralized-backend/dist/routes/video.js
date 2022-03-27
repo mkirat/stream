@@ -57,6 +57,16 @@ router.get('/spotlight', (req, res) => __awaiter(void 0, void 0, void 0, functio
         streams: (0, stream_1.cleanStreamProps)(streams, false),
     });
 }));
+let ctr = 10;
+router.post('/test', (req, res) => {
+    console.log(ctr);
+    if (ctr === 0) {
+        ctr -= 1;
+        return res.json({});
+    }
+    ctr -= 1;
+    return res.status(404).json({});
+});
 router.get('/', middlewares_1.extractUserIfThere, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = (req.query || {});
     // @ts-ignore

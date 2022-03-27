@@ -39,6 +39,7 @@ const PROFILES = [
 export const createStream = async ({
   publicKey, streamId, title, description, thumbnail,
 }: CreateStreamProps): Promise<StreamAttributes> => {
+  console.log(`Bearer ${LIVEPEER_KEY}`);
   const response = await axios.post(`${LIVEPEER_API_URL}/api/stream`, {
     name: streamId,
     profiles: PROFILES,

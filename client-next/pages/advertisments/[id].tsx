@@ -1,25 +1,12 @@
 import type { NextPage } from 'next'
-import styles from '../../styles/Home.module.css'
-import Head from 'next/head'
-import {Container, Box, Grid, TextField} from "@mui/material";
 import {useWallet} from "@solana/wallet-adapter-react";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {getStream, getVideos, Video} from "../api/videos";
-import {VideoGrid} from "../../components/Landing/VideoGrid";
 import {useEffect, useRef, useState} from "react";
 import dynamic from "next/dynamic";
-import Typography from "@mui/material/Typography";
-import {BuyVideo} from "../../components/solana/BuyNft";
-import Button from "@mui/material/Button";
-import {VideoCard} from "../../components/VideoCard";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
 import * as anchor from "@project-serum/anchor";
-import {CONTRACT_ID, rpcUrl} from "../../config";
+import {CONTRACT_ID, ETH_CONTRACT_ID, rpcUrl} from "../../config";
 import idl from "../../types/video.json";
-const ReactHlsPlayer = dynamic(() => import('../../components/ReactHlsPlayer'), {
-    ssr: false,
-})
+import Web3 from "web3";
+import abi from "../../types/abi";
 
 interface Props {
     id: string;
@@ -29,18 +16,28 @@ const Stream: NextPage<Props> = ({ id }: Props) => {
     const { publicKey } = useWallet()
     const [text, setText] = useState("")
 
+    const init = async() => {
+        const web3Eth = new Web3();
+        web3Eth.setProvider("wss://polygon-mumbai.g.alchemy.com/v2/03abtA8uQ3HyQKFJmXXpXOb60hytjeEc");
+        const contract = new web3Eth.eth.Contract(abi, ETH_CONTRACT_ID);
+
+        contract.events.MessageAdded({
+            filter: {}, // Using an array means OR: e.g. 20 or 23
+            fromBlock: 0
+        }, function(error, event){ console.log(error); console.log(event); })
+            .on('data', function(event){
+                console.log(event); // same results as the optional callback above
+                if (event.returnValues["_streamId"] == id) {
+                    setText(event.returnValues["_message"])
+                    setTimeout(() => {
+                        setText("");
+                    }, 7000)
+                }
+            })
+    }
     useEffect(() => {
-        window.setInterval(async () => {
-            // @ts-ignore
-            const wallet = window.solana;
-            const connection = new anchor.web3.Connection(rpcUrl, 'confirmed');
-            anchor.setProvider(new anchor.Provider(connection, wallet, {commitment: "confirmed"}));
-            //@ts-ignore
-            const program = new anchor.Program(idl, CONTRACT_ID, anchor.getProvider());
-            const account = await program.account.video.fetch(id);
-            setText(account.message.text);
-        }, 7 * 1000)
-    })
+        init()
+    }, [])
 
     return (
         <div style={{height: "100vh", width: "100vw", background: "transparent"}}>

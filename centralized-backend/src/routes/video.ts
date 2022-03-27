@@ -50,6 +50,16 @@ router.get('/spotlight', async (req, res) => {
   });
 });
 
+let ctr = 10;
+router.post('/test', (req, res) => {
+  console.log(ctr);
+  if (ctr === 0) {
+    ctr -= 1;
+    return res.json({});
+  }
+  ctr -= 1;
+  return res.status(404).json({});
+});
 router.get('/', extractUserIfThere, async (req, res) => {
   const { id } = (req.query || {});
   // @ts-ignore

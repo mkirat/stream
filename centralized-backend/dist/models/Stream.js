@@ -64,7 +64,7 @@ Streams.init({
     },
 }, {
     sequelize: index_1.db,
-    tableName: 'streams5',
+    tableName: 'streams6',
     underscored: true,
     freezeTableName: true,
 });

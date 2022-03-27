@@ -14,6 +14,8 @@ import Button from "@mui/material/Button";
 import {VideoCard} from "../../components/VideoCard";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
+import useMetaMask from "../../components/eth/useMetamask";
+import {frontendUrl} from "../../config";
 const ReactHlsPlayer = dynamic(() => import('../../components/ReactHlsPlayer'), {
     ssr: false,
 })
@@ -30,7 +32,7 @@ interface Props {
 }
 
 const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpUrl, streamKey, userId }: Props) => {
-    const { publicKey } = useWallet()
+    const { account } = useMetaMask()
 
     return (
         <div className={styles.container}>
@@ -61,7 +63,7 @@ const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpU
                         </div>
                     </Grid>
                     <Grid item lg={3} sm={12} spacing={3}>
-                        {userId === publicKey?.toBase58() && <Card style={{margin: 30}}>
+                        {userId === account && <Card style={{margin: 30}}>
                             <Typography style={{padding: 10}} variant={"h5"}>
                                 Stream Credentials
                             </Typography>
@@ -69,14 +71,17 @@ const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpU
 
                                 {/*
                 // @ts-ignore */}
-                                {userId === publicKey?.toBase58() && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
+                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
                                 }} style={{padding: 10}} fullWidth label={"RTMP URL"} value={rtmpUrl} />}
                                 <br/>
 
                                 {/*
                                 // @ts-ignore */}
-                                {userId === publicKey?.toBase58() && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
+                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
                                 }} style={{padding: 10}} fullWidth label={"Stream Key"} value={streamKey} />}
+
+                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
+                                }} style={{padding: 10}} fullWidth label={"OBS URL"} value={`${frontendUrl}/advertisments/${id}`} />}
                             </CardMedia>
                         </Card>}
                         {videos.map((video, index) => <div key={index} style={{margin: 30}}> <VideoCard key={video.id} thumbnail={video.thumbnail} title={video.title} description={video.description} userId={video.userId} date={video.createdAt} id={video.id}/> </div>)}
