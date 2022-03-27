@@ -50,6 +50,7 @@ export const getServerSideProps = async(ctx: any) => {
         props: {
             videos: streams.map((stream: any) => ({
                 title: stream.title,
+                hasEnded: stream.hasEnded,
                 description: stream.description,
                 link: `/stream/${stream.id}`,
                 thumbnail: stream.thumbnail,

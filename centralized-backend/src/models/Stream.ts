@@ -15,6 +15,7 @@ export interface StreamAttributes {
     thumbnail: string;
     hlsUrl: string;
     providerStreamId: string;
+    hasEnded: boolean;
     videoContractId: string;
     startTime: Date;
     endTime?: Date;
@@ -29,6 +30,8 @@ export class Streams
   public id: string;
 
   public title: string;
+
+  public hasEnded: boolean;
 
   public description: string;
 
@@ -64,6 +67,9 @@ Streams.init(
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
+    },
+    hasEnded: {
+      type: DataTypes.BOOLEAN,
     },
     thumbnail: {
       type: DataTypes.STRING,
@@ -118,7 +124,7 @@ Streams.init(
   },
   {
     sequelize: db,
-    tableName: 'streams6',
+    tableName: 'streams7',
     underscored: true,
     freezeTableName: true,
   },

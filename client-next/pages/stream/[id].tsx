@@ -4,7 +4,7 @@ import Head from 'next/head'
 import {Container, Box, Grid, TextField} from "@mui/material";
 import {useWallet} from "@solana/wallet-adapter-react";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import {getStream, getVideos, Video} from "../api/videos";
+import {createStream, endStream, getStream, getVideos, Video} from "../api/videos";
 import {VideoGrid} from "../../components/Landing/VideoGrid";
 import {useRef} from "react";
 import dynamic from "next/dynamic";
@@ -16,6 +16,10 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import useMetaMask from "../../components/eth/useMetamask";
 import {frontendUrl} from "../../config";
+import {CssTextField} from "../../components/Modal/BuyNftModal";
+import {endStreamOnChain} from "../api/eth/contract";
+import {useRouter} from "next/router";
+import {useWeb3React} from "@web3-react/core";
 const ReactHlsPlayer = dynamic(() => import('../../components/ReactHlsPlayer'), {
     ssr: false,
 })
@@ -23,6 +27,7 @@ const ReactHlsPlayer = dynamic(() => import('../../components/ReactHlsPlayer'), 
 interface Props {
     hlsUrl: string;
     title: string;
+    hasEnded: string;
     description: string;
     id: string;
     videos: Video[];
@@ -31,8 +36,24 @@ interface Props {
     userId: string;
 }
 
-const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpUrl, streamKey, userId }: Props) => {
+const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpUrl, streamKey, userId, hasEnded }: Props) => {
     const { account } = useMetaMask()
+    const router = useRouter();
+    const { connector } = useWeb3React()
+
+    if (hasEnded) {
+        return <div className={styles.container}>
+            <div className={styles.main}>
+                <h1>
+                    This stream has ended ...
+                </h1>
+                <Button size={"large"} color={"secondary"} variant={"contained"} onClick={() => router.push("/")}>
+                    Home
+                </Button>
+                <br/><br/><br/><br/>
+            </div>
+        </div>
+    }
 
     return (
         <div className={styles.container}>
@@ -63,27 +84,41 @@ const Stream: NextPage<Props> = ({ hlsUrl, title, description, id, videos, rtmpU
                         </div>
                     </Grid>
                     <Grid item lg={3} sm={12} spacing={3}>
-                        {userId === account && <Card style={{margin: 30}}>
-                            <Typography style={{padding: 10}} variant={"h5"}>
-                                Stream Credentials
-                            </Typography>
+                        {userId === account && <Box style={{background: `linear-gradient(to right, #0f2027, #130f40)`, color: "#dff9fb"}}>
+                            <div style={{display: "flex", justifyContent: "space-between", padding: 14}}>
+                                <div>
+                                    <Typography variant={"h5"}>
+                                        Stream Credentials
+                                    </Typography>
+                                </div>
+                                <div>
+                                    <Button color={"secondary"} variant={"contained"} onClick={async () => {
+                                        await endStreamOnChain(id, await connector?.getProvider());
+                                        // @ts-ignore
+                                        await endStream({
+                                            videoContractId: id,
+                                            account
+                                        });
+                                        router.push(`/`)
+                                    }}>
+                                        End Stream
+                                    </Button>
+                                </div>
+                            </div>
                             <CardMedia>
 
                                 {/*
                 // @ts-ignore */}
-                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
-                                }} style={{padding: 10}} fullWidth label={"RTMP URL"} value={rtmpUrl} />}
+                                {userId === account && <CssTextField sx={{input: {color: "white"}}} style={{padding: 10}} fullWidth label={"RTMP URL"} value={rtmpUrl} />}
                                 <br/>
 
                                 {/*
                                 // @ts-ignore */}
-                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
-                                }} style={{padding: 10}} fullWidth label={"Stream Key"} value={streamKey} />}
+                                {userId === account && <CssTextField sx={{input: {color: "white"}}} style={{padding: 10}} fullWidth label={"Stream Key"} value={streamKey} />}
 
-                                {userId === account && <TextField InputProps={{endAdornment: <ContentCopyIcon position="end"></ContentCopyIcon>,
-                                }} style={{padding: 10}} fullWidth label={"OBS URL"} value={`${frontendUrl}/advertisments/${id}`} />}
+                                {userId === account && <CssTextField sx={{input: {color: "white"}}} style={{padding: 10}} fullWidth label={"OBS URL"} value={`${frontendUrl}/advertisments/${id}`} />}
                             </CardMedia>
-                        </Card>}
+                        </Box>}
                         {videos.map((video, index) => <div key={index} style={{margin: 30}}> <VideoCard key={video.id} thumbnail={video.thumbnail} title={video.title} description={video.description} userId={video.userId} date={video.createdAt} id={video.id}/> </div>)}
                     </Grid>
                 </Grid>
@@ -100,7 +135,7 @@ export default Stream
 
 export const getServerSideProps = async(ctx: any) => {
     const { query } = ctx;
-    const { hlsUrl, title, description, rtmpUrl, streamKey, userId } = await getStream({
+    const { hlsUrl, title, description, rtmpUrl, streamKey, userId, hasEnded } = await getStream({
         videoContractId: query.id
     });
 
@@ -108,7 +143,7 @@ export const getServerSideProps = async(ctx: any) => {
 
     return {
         props: {
-            hlsUrl, title, description, id: query.id, videos, rtmpUrl: rtmpUrl || "", streamKey: streamKey || "", userId: userId || ""
+            hlsUrl, title, description, id: query.id, videos, rtmpUrl: rtmpUrl || "", streamKey: streamKey || "", userId: userId || "", hasEnded: hasEnded || false
         }
     }
 }

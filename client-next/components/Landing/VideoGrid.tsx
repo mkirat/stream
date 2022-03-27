@@ -8,7 +8,7 @@ interface Props {
 
 export const VideoGrid = ({videos}: Props) => {
     return <Grid container spacing={3}>
-        {videos.map((video, index) => <Grid key={index} item xs={12} md={4} lg={4}>
+        {videos.filter(x => !x.hasEnded).map((video, index) => <Grid key={index} item xs={12} md={4} lg={4}>
                 <VideoCard userId={video.userId} id={video.id} thumbnail={video.thumbnail} title={video.title} description={video.description} date={video.createdAt} />
             </Grid>
         )}

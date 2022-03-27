@@ -61,6 +61,7 @@ export const createStream = async ({
     streamKey,
     parentContractId: '',
     providerStreamId: id,
+    hasEnded: false,
     startTime: new Date(),
     thumbnail,
     videoContractId: id,
@@ -82,5 +83,6 @@ export const cleanStreamProps = (streams: StreamAttributes[], isOwner) => {
     createdAt: stream.createdAt,
     type: 0,
     userId: stream.userId,
+    hasEnded: stream.hasEnded,
   }));
 };

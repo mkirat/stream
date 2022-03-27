@@ -67,6 +67,19 @@ router.post('/test', (req, res) => {
     ctr -= 1;
     return res.status(404).json({});
 });
+router.delete('/', middlewares_1.tokenMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.query;
+    const stream = yield Stream_1.Streams.findOne({
+        where: {
+            id,
+        },
+    });
+    console.log('updating stream');
+    yield stream.update({
+        hasEnded: true,
+    });
+    res.json({});
+}));
 router.get('/', middlewares_1.extractUserIfThere, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = (req.query || {});
     // @ts-ignore
@@ -84,6 +97,7 @@ router.get('/', middlewares_1.extractUserIfThere, (req, res) => __awaiter(void 0
         rtmpUrl: stream.rtmpUrl,
         streamKey: stream.streamKey,
         userId: stream.userId,
+        hasEnded: stream.hasEnded,
     });
 }));
 exports.default = router;

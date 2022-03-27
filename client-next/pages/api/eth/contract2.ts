@@ -20,21 +20,6 @@ export const createStreamOnChain = async (account: string) => {
         params: [transactionParameters],
     });
     console.log(response);
-    // const response = await new Promise((resolve, reject) => {
-    //     contract.methods.addStream(account).send({
-    //         from: account
-    //     })
-    //         .on("receipt", function(x) {
-    //             console.log(x)
-    //         })
-    // .then(x => {
-    //     console.error(x);
-    // })
-    //     .catch(e => {
-    //         console.error(e);
-    //     })
 
-    // })
-    // console.error(response);
 
 }

@@ -80,6 +80,19 @@ export default [
         "internalType": "uint256",
         "name": "stream_id",
         "type": "uint256"
+      }
+    ],
+    "name": "endStream",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "stream_id",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -164,6 +177,11 @@ export default [
         "internalType": "address payable",
         "name": "owner",
         "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "hasEnded",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

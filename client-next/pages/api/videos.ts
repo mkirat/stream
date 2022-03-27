@@ -23,6 +23,7 @@ export interface Video {
     type: VideoType;
     thumbnail: string;
     createdAt: number;
+    hasEnded: boolean;
     id: string;
     userId: string;
 }
@@ -70,6 +71,14 @@ export const createStream = async ({title, description, thumbnail, account, vide
     return {id: response.data?.id || ""};
 }
 
+export const endStream = async({videoContractId, account}: {videoContractId: string}) => {
+    await axios.delete(`${apiUrl}/video?id=${videoContractId}`, {
+        headers: {
+            "Authorization": `Bearer: ${account}`
+        }
+    });
+}
+
 export const getStream = async({videoContractId}: {videoContractId: string}) => {
     const response = await axios.get(`${apiUrl}/video?id=${videoContractId}`, {
         headers: {
@@ -82,6 +91,7 @@ export const getStream = async({videoContractId}: {videoContractId: string}) => 
         description: response.data.description,
         rtmpUrl: response.data.rtmpUrl,
         streamKey: response.data.streamKey,
-        userId: response.data.userId
+        userId: response.data.userId,
+        hasEnded: response.data.hasEnded
     };
 }

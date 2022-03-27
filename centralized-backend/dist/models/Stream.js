@@ -12,6 +12,9 @@ Streams.init({
         type: sequelize_1.DataTypes.STRING,
         primaryKey: true,
     },
+    hasEnded: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+    },
     thumbnail: {
         type: sequelize_1.DataTypes.STRING,
     },
@@ -64,7 +67,7 @@ Streams.init({
     },
 }, {
     sequelize: index_1.db,
-    tableName: 'streams6',
+    tableName: 'streams7',
     underscored: true,
     freezeTableName: true,
 });

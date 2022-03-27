@@ -64,6 +64,7 @@ const createStream = ({ publicKey, streamId, title, description, thumbnail, }) =
         streamKey,
         parentContractId: '',
         providerStreamId: id,
+        hasEnded: false,
         startTime: new Date(),
         thumbnail,
         videoContractId: id,
@@ -85,6 +86,7 @@ const cleanStreamProps = (streams, isOwner) => {
         createdAt: stream.createdAt,
         type: 0,
         userId: stream.userId,
+        hasEnded: stream.hasEnded,
     }));
 };
 exports.cleanStreamProps = cleanStreamProps;

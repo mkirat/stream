@@ -60,6 +60,21 @@ router.post('/test', (req, res) => {
   ctr -= 1;
   return res.status(404).json({});
 });
+
+router.delete('/', tokenMiddleware, async (req, res) => {
+  const { id } = req.query;
+  const stream = await Streams.findOne({
+    where: {
+      id,
+    },
+  });
+  console.log('updating stream');
+  await stream.update({
+    hasEnded: true,
+  });
+  res.json({});
+});
+
 router.get('/', extractUserIfThere, async (req, res) => {
   const { id } = (req.query || {});
   // @ts-ignore
@@ -78,6 +93,7 @@ router.get('/', extractUserIfThere, async (req, res) => {
     rtmpUrl: stream.rtmpUrl, // TODO: This is insecure
     streamKey: stream.streamKey,
     userId: stream.userId,
+    hasEnded: stream.hasEnded,
   });
 });
 
